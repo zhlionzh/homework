@@ -90,10 +90,11 @@ def main():
     transactions = get_transaction(data_set)
     efficient_apr(transactions)
     df = get_dataframe(transactions)
-    df = mlx_apr1(df)
-    plt.plot(df['support'],df['confidence'],df['lift'],'o-')
-    plt.show()
     mlx_apr(df)
+    df = mlx_apr1(df)
+    plt.plot(df['support'], df['confidence'], 'o-')
+    plt.plot(df['support'], df['lift'], 'o-')
+    plt.show()
 
 
 if __name__ == '__main__':
