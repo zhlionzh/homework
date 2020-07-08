@@ -54,11 +54,34 @@ def mlx_apr(df):
     hot_encoded_df = df.groupby(['Transaction', 'Items'])['Items'].count().unstack().reset_index().fillna(0).set_index('Transaction')
     hot_encoded_df = hot_encoded_df.applymap(encode_units)
     frequent_itemsets = aps(hot_encoded_df, min_support=0.05, use_colnames=True)
-    frequent_itemsets = frequent_itemsets.sort_values(by="support" , ascending=False)
+    frequent_itemsets = frequent_itemsets.sort_values(by="support", ascending=False)
     rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
     rules = rules.sort_values(by="lift", ascending=False)
     print("频繁项集：", frequent_itemsets)
-    print("关联规则：", rules[(rules['lift'] >= 0.1) & (rules['confidence'] >= 0.2)])
+    print("关联规则：", rules[(rules['lift'] >= 1) & (rules['confidence'] >= 0.2)])
+
+
+def mlx_apr1(df):
+    # mlx_apr挖掘频繁项集和频繁规则
+    pd.options.display.max_columns = 100
+    hot_encoded_df = df.groupby(['Transaction', 'Items'])['Items'].count().unstack().reset_index().fillna(0).set_index('Transaction')
+    hot_encoded_df = hot_encoded_df.applymap(encode_units)
+    t = np.arange(0.01, 0.24, 0.01)
+    cf = []
+    lf = []
+    for i in t:
+        frequent_itemsets = aps(hot_encoded_df, min_support=i, use_colnames=True)
+        frequent_itemsets = frequent_itemsets.sort_values(by="support", ascending=False)
+        rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
+        rules = rules.sort_values(by="lift", ascending=False)
+        x = rules[rules['confidence'] >= 0.2]['confidence'].count()
+        y = rules[rules['lift'] >= 1]['lift'].count()
+        cf.append(x)
+        lf.append(y)
+    tf = zip(t, cf, lf)
+    df = pd.DataFrame(tf, columns=['support', 'confidence', 'lift'])
+    return df
+
 
 
 def main():
@@ -68,6 +91,10 @@ def main():
     efficient_apr(transactions)
     df = get_dataframe(transactions)
     mlx_apr(df)
+    df = mlx_apr1(df)
+    plt.plot(df['support'], df['confidence'], 'o-')
+    plt.plot(df['support'], df['lift'], 'o-')
+    plt.show()
 
 
 if __name__ == '__main__':
