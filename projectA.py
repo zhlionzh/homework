@@ -4,7 +4,7 @@ import pandas as pd
 
 def get_soup(page):
     # 请求URL
-    url = 'http://car.bitauto.com/xuanchegongju/?mid=8'.format(page+1)
+    url = 'http://car.bitauto.com/xuanchegongju/?mid=8&page{}'.format(page+1)
     # 得到页面的内容
     headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'}
     html=requests.get(url,headers=headers,timeout=10)
