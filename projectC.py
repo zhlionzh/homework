@@ -46,7 +46,7 @@ def kmeans_cluster(k, train_x, file_path):
     result.rename({0: u'聚类结果'}, axis=1, inplace=True)
     print(result)
     # 将结果导出到CSV文件中
-    result.to_csv(file_path, index=False)
+    result.to_csv(file_path, index=False, encoding='gbk')
 
 
 # K-Means 手肘法：统计不同K取值的误差平方和
